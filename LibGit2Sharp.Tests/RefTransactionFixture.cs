@@ -165,7 +165,7 @@ namespace LibGit2Sharp.Tests
                 using (var tx2 = repo.Refs.NewRefTransaction())
                 {
                     tx.LockReference(myRef);
-                    Assert.Throws<LibGit2SharpException>(() => tx2.LockReference(myRef));
+                    Assert.Throws<LockedFileException>(() => tx2.LockReference(myRef));
                 }
             }
         }
