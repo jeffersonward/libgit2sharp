@@ -77,7 +77,7 @@ namespace LibGit2Sharp
         /// <summary>
         /// 
         /// </summary>
-        public void Commit()
+        public virtual void Commit()
         {
             Proxy.git_transaction_commit(this.transactionHandle);
         }
