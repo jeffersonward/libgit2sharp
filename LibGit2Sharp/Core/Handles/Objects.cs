@@ -556,4 +556,50 @@ namespace LibGit2Sharp.Core.Handles
         }
     }
 
+    internal unsafe class ReferenceDatabaseHandle : Libgit2Object
+    {
+        internal ReferenceDatabaseHandle(git_refdb *ptr, bool owned)
+            : base((void *) ptr, owned)
+        {
+        }
+
+        internal ReferenceDatabaseHandle(IntPtr ptr, bool owned)
+            : base(ptr, owned)
+        {
+        }
+
+        public override void Free()
+        {
+            NativeMethods.git_refdb_free((git_refdb*) ptr);
+        }
+
+        public static implicit operator git_refdb*(ReferenceDatabaseHandle handle)
+        {
+            return (git_refdb*) handle.Handle;
+        }
+    }
+
+    internal unsafe class TransactionHandle : Libgit2Object
+    {
+        internal TransactionHandle(git_transaction *ptr, bool owned)
+            : base((void *) ptr, owned)
+        {
+        }
+
+        internal TransactionHandle(IntPtr ptr, bool owned)
+            : base(ptr, owned)
+        {
+        }
+
+        public override void Free()
+        {
+            NativeMethods.git_transaction_free((git_transaction*) ptr);
+        }
+
+        public static implicit operator git_transaction*(TransactionHandle handle)
+        {
+            return (git_transaction*) handle.Handle;
+        }
+    }
+
 }

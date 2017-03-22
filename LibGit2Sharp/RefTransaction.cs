@@ -12,8 +12,8 @@ namespace LibGit2Sharp
     /// </summary>
     public class RefTransaction : IDisposable
     {
-        TransactionSafeHandle transactionHandle;
-        RepositorySafeHandle repo;
+        TransactionHandle transactionHandle;
+        RepositoryHandle repo;
 
         internal RefTransaction(Repository repository)
         {

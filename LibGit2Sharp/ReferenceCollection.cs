@@ -16,7 +16,7 @@ namespace LibGit2Sharp
     public class ReferenceCollection : IEnumerable<Reference>
     {
         internal readonly Repository repo;
-        internal readonly ReferenceDatabaseSafeHandle refDbHandle;
+        internal readonly ReferenceDatabaseHandle refDbHandle;
 
         /// <summary>
         /// Needed for mocking purposes.

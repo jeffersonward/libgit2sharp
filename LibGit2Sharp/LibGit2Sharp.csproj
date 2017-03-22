@@ -81,7 +81,6 @@
     <Compile Include="Core\GitPushUpdate.cs" />
     <Compile Include="Core\GitSubmoduleIgnore.cs" />
     <Compile Include="Core\GitRefdbIterator.cs" />
-    <Compile Include="Core\Handles\TransactionSafeHandle.cs" />
     <Compile Include="Core\GitWriteStream.cs" />
     <Compile Include="Core\Platform.cs" />
     <Compile Include="Core\WriteStream.cs" />
@@ -198,11 +197,9 @@
     <Compile Include="RewriteHistoryOptions.cs" />
     <Compile Include="StashModifiers.cs" />
     <Compile Include="TreeEntryTargetType.cs" />
-    <Compile Include="Core\Handles\NotOwnedReferenceSafeHandle.cs" />
     <Compile Include="UnmatchedPathException.cs" />
     <Compile Include="ReflogCollection.cs" />
     <Compile Include="Core\GitRefdbBackend.cs" />
-    <Compile Include="Core\Handles\ReferenceDatabaseSafeHandle.cs" />
     <Compile Include="Core\PathCase.cs" />
     <Compile Include="MatchedPathsAggregator.cs" />
     <Compile Include="Core\SubmoduleLazyGroup.cs" />
@@ -355,6 +352,8 @@
     <Compile Include="Core\Opaques.cs" />
     <Compile Include="Core\Handles\Objects.cs">
       <DependentUpon>Objects.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Core\Handles\Libgit2Object.cs" />
     <Compile Include="Core\GitCredential.cs" />
@@ -395,7 +394,9 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
