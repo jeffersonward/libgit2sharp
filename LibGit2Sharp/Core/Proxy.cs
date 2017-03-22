@@ -2663,13 +2663,13 @@ namespace LibGit2Sharp.Core
             return NativeMethods.git_repository_path(repo);
         }
 
-        public static ReferenceDatabaseHandle git_repository_refdb(RepositoryHandle repo)
+        public static unsafe ReferenceDatabaseHandle git_repository_refdb(RepositoryHandle repo)
         {
-            ReferenceDatabaseHandle handle;
-            int res = NativeMethods.git_repository_refdb(out handle, repo);
+            git_refdb* refDb;
+            int res = NativeMethods.git_repository_refdb(out refDb, repo);
             Ensure.ZeroResult(res);
 
-            return handle;
+            return new ReferenceDatabaseHandle(refDb, true);
         }
 
         public static unsafe void git_repository_set_config(RepositoryHandle repo, ConfigurationHandle config)
@@ -3289,21 +3289,21 @@ namespace LibGit2Sharp.Core
 
         #region git_transaction_
 
-        public static TransactionHandle git_transaction_new(RepositoryHandle repo)
+        public static unsafe TransactionHandle git_transaction_new(RepositoryHandle repo)
         {
-            TransactionHandle tx;
+            git_transaction* tx;
             int res = NativeMethods.git_transaction_new(out tx, repo);
             Ensure.ZeroResult(res);
-            return tx;
+            return new TransactionHandle(tx, true);
         }
 
-        public static void git_transaction_lock_ref(TransactionHandle tx, string refName)
+        public static unsafe void git_transaction_lock_ref(TransactionHandle tx, string refName)
         {
             int res = NativeMethods.git_transaction_lock_ref(tx, refName);
             Ensure.ZeroResult(res);
         }
 
-        public static void git_transaction_set_target(TransactionHandle tx, string refName, GitOid oid, Identity ident, string msg)
+        public static unsafe void git_transaction_set_target(TransactionHandle tx, string refName, GitOid oid, Identity ident, string msg)
         {
             using (SignatureHandle sigHandle = ident.SafeBuildNowSignatureHandle())
             {
@@ -3312,7 +3312,7 @@ namespace LibGit2Sharp.Core
             }
         }
 
-        public static void git_transaction_set_symbolic_target(
+        public static unsafe void git_transaction_set_symbolic_target(
             TransactionHandle tx,
             string refName,
             string target,
@@ -3337,13 +3337,13 @@ namespace LibGit2Sharp.Core
             Ensure.ZeroResult(res);
         }
 
-        public static void git_transaction_remove(TransactionHandle tx, string refName)
+        public static unsafe void git_transaction_remove(TransactionHandle tx, string refName)
         {
             int res = NativeMethods.git_transaction_remove(tx, refName);
             Ensure.ZeroResult(res);
         }
 
-        public static void git_transaction_commit(TransactionHandle tx)
+        public static unsafe void git_transaction_commit(TransactionHandle tx)
         {
             int res = NativeMethods.git_transaction_commit(tx);
             Ensure.ZeroResult(res);
