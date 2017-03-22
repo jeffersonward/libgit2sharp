@@ -380,7 +380,7 @@ namespace LibGit2Sharp
                     // TODO: Marshal this correctly
                     if (oidPtr != IntPtr.Zero)
                     {
-                        GitOid oid = new GitOid();
+                        GitOid oid = GitOid.Empty;
                         Marshal.Copy(oidPtr, oid.Id, 0, 20);
                     }
 
