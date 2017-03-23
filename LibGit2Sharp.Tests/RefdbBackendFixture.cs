@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using LibGit2Sharp.Tests.TestHelpers;
@@ -150,6 +151,11 @@ namespace LibGit2Sharp.Tests
         {
             var scd = new SelfCleaningDirectory(this);
             var path = Repository.Init(scd.RootedDirectoryPath);
+
+            //File.WriteAllText(Path.Combine(path, "refs", "tags", "broken1"), "tags/shouldnt/be/symbolic");
+            //File.WriteAllText(Path.Combine(path, "refs", "tags", "broken2"), "but/are/here/for/testing");
+            //File.WriteAllText(Path.Combine(path, "refs", "tags", "broken3"), "the/type/filtering");
+            //File.WriteAllText(Path.Combine(path, "refs", "tags", "correct1"), "be3563ae3f795b2b4353bcce3a527ad0a4f7f644");
 
             using (Repository repository = new Repository(path))
             {
@@ -668,7 +674,7 @@ namespace LibGit2Sharp.Tests
 
             public override RefdbIterator GenerateRefIterator(string glob)
             {
-                return new MockRefDbIterator(References, glob);
+                return new MockRefDbIterator(this, References, glob);
             }
 
             public override bool HasReflog(string refName)
@@ -738,7 +744,7 @@ namespace LibGit2Sharp.Tests
             IDictionary<string, MockRefdbReference> references;
             IEnumerator<KeyValuePair<string, MockRefdbReference>> nextIterator;
 
-            public MockRefDbIterator(IDictionary<string, MockRefdbReference> allRefs, string glob)
+            public MockRefDbIterator(RefdbBackend backend, IDictionary<string, MockRefdbReference> allRefs, string glob) : base(backend)
             {
                 if (!string.IsNullOrEmpty(glob))
                 {
@@ -773,16 +779,6 @@ namespace LibGit2Sharp.Tests
                 oid = next.Value.Oid;
                 symbolic = next.Value.Symbolic;
                 return true;
-            }
-
-            public override string NextName()
-            {
-                if (nextIterator.MoveNext())
-                {
-                    return nextIterator.Current.Key;
-                }
-
-                return null;
             }
         }
 
