@@ -152,11 +152,6 @@ namespace LibGit2Sharp.Tests
             var scd = new SelfCleaningDirectory(this);
             var path = Repository.Init(scd.RootedDirectoryPath);
 
-            //File.WriteAllText(Path.Combine(path, "refs", "tags", "broken1"), "tags/shouldnt/be/symbolic");
-            //File.WriteAllText(Path.Combine(path, "refs", "tags", "broken2"), "but/are/here/for/testing");
-            //File.WriteAllText(Path.Combine(path, "refs", "tags", "broken3"), "the/type/filtering");
-            //File.WriteAllText(Path.Combine(path, "refs", "tags", "correct1"), "be3563ae3f795b2b4353bcce3a527ad0a4f7f644");
-
             using (Repository repository = new Repository(path))
             {
                 MockRefdbBackend backend = SetupBackend(repository);
