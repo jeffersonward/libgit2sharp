@@ -7,27 +7,6 @@ using LibGit2Sharp.Core.Handles;
 namespace LibGit2Sharp
 {
     /// <summary>
-    /// Unlock type
-    /// </summary>
-    public enum RefdbBackendUnlockType
-    {
-        /// <summary>
-        /// Unforced
-        /// </summary>
-        Unforced = 0,
-
-        /// <summary>
-        /// Forced
-        /// </summary>
-        Forced = 1,
-
-        /// <summary>
-        /// Reference is to be deleted
-        /// </summary>
-        UnlockAndDelete = 2
-    }
-
-    /// <summary>
     ///   Base class for all custom managed backends for the libgit2 reference database.
     /// </summary>
     public abstract class RefdbBackend
@@ -158,9 +137,8 @@ namespace LibGit2Sharp
         /// 
         /// </summary>
         /// <param name="refname"></param>
-        /// <param name="type"></param>
         /// <returns></returns>
-        public abstract void UnlockReference(string refname, RefdbBackendUnlockType type);
+        public abstract void UnlockReference(string refname);
 
         private IntPtr nativeBackendPointer;
 
@@ -621,7 +599,42 @@ namespace LibGit2Sharp
                     string refName = Proxy.git_reference_name(referenceHandle);
                     GitReferenceType type = Proxy.git_reference_type(referenceHandle);
 
-                    refdbBackend.UnlockReference(refName, (RefdbBackendUnlockType)force.ToInt32());
+                    int state = force.ToInt32();
+                    switch (state)
+                    {
+                        case 0: //Error
+                            refdbBackend.UnlockReference(refName);
+                            break;
+                        case 1: //Updated
+
+                            switch(type)
+                            {
+                                case GitReferenceType.Oid:
+                                ObjectId targetOid = Proxy.git_reference_target(referenceHandle);
+                                refdbBackend.WriteDirectReference(refName, targetOid, true);
+                                break;
+
+                                case GitReferenceType.Symbolic:
+                                string targetIdentifier = Proxy.git_reference_symbolic_target(referenceHandle);
+                                refdbBackend.WriteSymbolicReference(refName, targetIdentifier, true);
+                                break;
+
+                                default:
+                                throw new LibGit2SharpException(
+                                    String.Format(CultureInfo.InvariantCulture,
+                                        "Unable to update reference from a type '{0}'.", type));
+                            }
+
+                            refdbBackend.UnlockReference(refName);
+                            break;
+                        case 2: //Deleted
+                            refdbBackend.Delete(refName);
+                            break;
+                        default:
+                            throw new LibGit2SharpException(
+                                String.Format(CultureInfo.InvariantCulture,
+                                    "Unknown unlock state '{0}'.", state));
+                    }
 
                     res = GitErrorCode.Ok;
                 }

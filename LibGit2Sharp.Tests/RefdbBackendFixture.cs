@@ -421,8 +421,12 @@ namespace LibGit2Sharp.Tests
             {
                 MockRefdbBackend backend = SetupBackend(repo);
 
-                var refTarget1 = repo.Refs.Add(refTargetName, oid1);
-                var refTarget2 = repo.Refs.Add(refTarget2Name, oid2);
+                backend.References[refTargetName] = new MockRefdbReference(oid1);
+                var refTarget1 = repo.Refs[refTargetName];
+
+                backend.References[refTarget2Name] = new MockRefdbReference(oid2);
+                var refTarget2 = repo.Refs[refTarget2Name];
+
                 var mySymRef = repo.Refs.Add(mySymRefName, refTargetName, null, true);
 
                 using (var tx = repo.Refs.NewRefTransaction())
@@ -449,7 +453,9 @@ namespace LibGit2Sharp.Tests
             using (var repo = new Repository(path))
             {
                 MockRefdbBackend backend = SetupBackend(repo);
-                var myRef = repo.Refs.Add(myRefName, oid1);
+                backend.References[myRefName] = new MockRefdbReference(oid1);
+
+                var myRef = repo.Refs[myRefName];
 
                 using (var tx = repo.Refs.NewRefTransaction())
                 using (var tx2 = repo.Refs.NewRefTransaction())
@@ -715,7 +721,7 @@ namespace LibGit2Sharp.Tests
                 reference.IsLocked = true;
             }
 
-            public override void UnlockReference(string refName, RefdbBackendUnlockType type)
+            public override void UnlockReference(string refName)
             {
                 MockRefdbReference reference;
 
@@ -723,11 +729,6 @@ namespace LibGit2Sharp.Tests
                 {
                     throw new LibGit2Sharp.NotFoundException(
                         string.Format("Reference {0} was not found.", refName));
-                }
-
-                if (type == RefdbBackendUnlockType.UnlockAndDelete)
-                {
-                    references.Remove(refName);
                 }
 
                 reference.IsLocked = false;
